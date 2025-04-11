@@ -1,4 +1,3 @@
-
 import { User, Post } from './types';
 
 export const users: User[] = [
@@ -7,27 +6,50 @@ export const users: User[] = [
     username: 'johndoe',
     displayName: 'John Doe',
     profilePicture: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80',
+    coverPhoto: 'https://images.unsplash.com/photo-1649972904349-6e44c42644a7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80',
     bio: 'Photographer and travel enthusiast',
-    followers: ['user2', 'user3'],
-    following: ['user2'],
+    followers: ['user2', 'user3', 'user4', 'user5'],
+    following: ['user2', 'user3'],
   },
   {
     id: 'user2',
     username: 'janesmith',
     displayName: 'Jane Smith',
     profilePicture: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80',
+    coverPhoto: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80',
     bio: 'Digital artist and coffee lover',
-    followers: ['user1'],
-    following: ['user1', 'user3'],
+    followers: ['user1', 'user3', 'user4'],
+    following: ['user1', 'user3', 'user5'],
   },
   {
     id: 'user3',
     username: 'mikebrown',
     displayName: 'Mike Brown',
     profilePicture: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
+    coverPhoto: 'https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80',
     bio: 'Software developer and gamer',
+    followers: ['user2', 'user4'],
+    following: ['user1', 'user2'],
+  },
+  {
+    id: 'user4',
+    username: 'sarahlee',
+    displayName: 'Sarah Lee',
+    profilePicture: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=764&q=80',
+    coverPhoto: 'https://images.unsplash.com/photo-1517022812141-23620dba5c23?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80',
+    bio: 'Fashion designer and traveler',
+    followers: ['user1', 'user5'],
+    following: ['user1', 'user2'],
+  },
+  {
+    id: 'user5',
+    username: 'alexchen',
+    displayName: 'Alex Chen',
+    profilePicture: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80',
+    coverPhoto: 'https://images.unsplash.com/photo-1581092918056-0c4c1e9f547b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80',
+    bio: 'Music producer and guitarist',
     followers: ['user2'],
-    following: ['user1'],
+    following: ['user4'],
   },
 ];
 
