@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Heart, MessageCircle, Send, MoreHorizontal } from 'lucide-react';
+import { Heart, MessageCircle, Send, MoreHorizontal, Music, Play, Pause } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -19,6 +19,8 @@ const Post = ({ post }: PostProps) => {
   const [showComments, setShowComments] = useState(false);
   const [newComment, setNewComment] = useState('');
   const [comments, setComments] = useState([...post.comments]);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
   
   const user = getUserById(post.userId);
   
@@ -34,6 +36,28 @@ const Post = ({ post }: PostProps) => {
     addComment(post.id, currentUserId, newComment);
     setComments([...post.comments]);
     setNewComment('');
+  };
+  
+  const togglePlayMusic = () => {
+    if (!post.music) return;
+    
+    if (!audioElement) {
+      const audio = new Audio(post.music.url);
+      setAudioElement(audio);
+      audio.play().catch(error => console.error("Error playing audio:", error));
+      setIsPlaying(true);
+      
+      audio.addEventListener('ended', () => {
+        setIsPlaying(false);
+      });
+    } else {
+      if (isPlaying) {
+        audioElement.pause();
+      } else {
+        audioElement.play().catch(error => console.error("Error playing audio:", error));
+      }
+      setIsPlaying(!isPlaying);
+    }
   };
   
   if (!user) return null;
@@ -61,6 +85,27 @@ const Post = ({ post }: PostProps) => {
       <div className="px-4 pb-2">
         <p className="mb-2">{post.content}</p>
       </div>
+      
+      {/* Music Attachment */}
+      {post.music && (
+        <div className="mx-4 mb-3 p-3 bg-gray-50 rounded-lg flex items-center">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="h-8 w-8 rounded-full bg-primary text-white hover:bg-primary/90 mr-3"
+            onClick={togglePlayMusic}
+          >
+            {isPlaying ? <Pause size={16} /> : <Play size={16} />}
+          </Button>
+          <div className="flex-1">
+            <div className="flex items-center">
+              <Music size={16} className="text-primary mr-2" />
+              <p className="font-medium">{post.music.title}</p>
+            </div>
+            <p className="text-xs text-gray-500">{post.music.artist}</p>
+          </div>
+        </div>
+      )}
       
       {/* Post Image */}
       {post.image && (

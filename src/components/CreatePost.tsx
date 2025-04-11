@@ -7,6 +7,8 @@ import { Image as ImageIcon, X } from 'lucide-react';
 import { createPost, getUserById, currentUserId } from '@/lib/data';
 import { toast } from '@/components/ui/use-toast';
 import { fileToDataUrl, validateImageFile } from '@/lib/fileUtils';
+import MusicSelector from './MusicSelector';
+import { Song } from '@/lib/types';
 
 interface CreatePostProps {
   onPostCreated?: () => void;
@@ -15,6 +17,7 @@ interface CreatePostProps {
 const CreatePost = ({ onPostCreated }: CreatePostProps) => {
   const [content, setContent] = useState('');
   const [image, setImage] = useState<string | undefined>(undefined);
+  const [selectedSong, setSelectedSong] = useState<Song | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -27,11 +30,12 @@ const CreatePost = ({ onPostCreated }: CreatePostProps) => {
     setIsSubmitting(true);
     
     // Create new post
-    createPost(currentUserId, content, image);
+    createPost(currentUserId, content, image, selectedSong || undefined);
     
     // Reset form
     setContent('');
     setImage(undefined);
+    setSelectedSong(null);
     setIsSubmitting(false);
     
     // Show success toast
@@ -106,24 +110,37 @@ const CreatePost = ({ onPostCreated }: CreatePostProps) => {
             </div>
           )}
           
+          {/* Music Selection */}
+          {selectedSong && (
+            <div className="mt-3">
+              <MusicSelector onSelectSong={setSelectedSong} selectedSong={selectedSong} />
+            </div>
+          )}
+          
           <div className="flex justify-between items-center mt-3">
-            <Button 
-              type="button" 
-              variant="outline" 
-              size="sm"
-              className="text-gray-600"
-              onClick={handleImageUploadClick}
-            >
-              <ImageIcon size={18} className="mr-1" />
-              Photo
-              <input
-                type="file"
-                ref={fileInputRef}
-                className="hidden"
-                accept="image/*"
-                onChange={handleImageUpload}
-              />
-            </Button>
+            <div className="flex gap-2">
+              <Button 
+                type="button" 
+                variant="outline" 
+                size="sm"
+                className="text-gray-600"
+                onClick={handleImageUploadClick}
+              >
+                <ImageIcon size={18} className="mr-1" />
+                Photo
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                />
+              </Button>
+              
+              {!selectedSong && (
+                <MusicSelector onSelectSong={setSelectedSong} selectedSong={selectedSong} />
+              )}
+            </div>
             
             <Button 
               onClick={handleSubmit} 

@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { Home, User, Search, Bell, LogOut } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getUserById, currentUserId } from '@/lib/data';
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import SearchDialog from './SearchDialog';
 
 const Navbar = () => {
   const currentUser = getUserById(currentUserId);
@@ -25,9 +27,14 @@ const Navbar = () => {
           <Link to="/" className="text-gray-700 hover:text-primary transition-colors">
             <Home className="w-6 h-6" />
           </Link>
-          <Link to="#" className="text-gray-700 hover:text-primary transition-colors">
-            <Search className="w-6 h-6" />
-          </Link>
+          <Dialog>
+            <DialogTrigger asChild>
+              <button className="text-gray-700 hover:text-primary transition-colors">
+                <Search className="w-6 h-6" />
+              </button>
+            </DialogTrigger>
+            <SearchDialog />
+          </Dialog>
           <Link to="#" className="text-gray-700 hover:text-primary transition-colors">
             <Bell className="w-6 h-6" />
           </Link>
