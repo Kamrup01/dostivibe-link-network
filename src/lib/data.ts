@@ -1,3 +1,4 @@
+
 import { User, Post } from './types';
 
 export const users: User[] = [
@@ -172,4 +173,26 @@ export const createPost = (userId: string, content: string, image?: string): Pos
   
   posts.unshift(newPost);
   return newPost;
+};
+
+/**
+ * Update a user's profile picture
+ */
+export const updateUserProfilePicture = (userId: string, imageUrl: string): boolean => {
+  const user = getUserById(userId);
+  if (!user) return false;
+  
+  user.profilePicture = imageUrl;
+  return true;
+};
+
+/**
+ * Update a user's cover photo
+ */
+export const updateUserCoverPhoto = (userId: string, imageUrl: string): boolean => {
+  const user = getUserById(userId);
+  if (!user) return false;
+  
+  user.coverPhoto = imageUrl;
+  return true;
 };
