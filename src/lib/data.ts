@@ -179,10 +179,10 @@ export const createPost = (userId: string, content: string, image?: string): Pos
  * Update a user's profile picture
  */
 export const updateUserProfilePicture = (userId: string, imageUrl: string): boolean => {
-  const user = getUserById(userId);
-  if (!user) return false;
+  const userIndex = users.findIndex(user => user.id === userId);
+  if (userIndex === -1) return false;
   
-  user.profilePicture = imageUrl;
+  users[userIndex].profilePicture = imageUrl;
   return true;
 };
 
@@ -190,9 +190,32 @@ export const updateUserProfilePicture = (userId: string, imageUrl: string): bool
  * Update a user's cover photo
  */
 export const updateUserCoverPhoto = (userId: string, imageUrl: string): boolean => {
-  const user = getUserById(userId);
-  if (!user) return false;
+  const userIndex = users.findIndex(user => user.id === userId);
+  if (userIndex === -1) return false;
   
-  user.coverPhoto = imageUrl;
+  users[userIndex].coverPhoto = imageUrl;
+  return true;
+};
+
+/**
+ * Update a user's profile information
+ */
+export const updateUserProfile = (userId: string, updates: Partial<Pick<User, 'displayName' | 'username' | 'bio'>>): boolean => {
+  const userIndex = users.findIndex(user => user.id === userId);
+  if (userIndex === -1) return false;
+  
+  // Update only the fields provided
+  if (updates.displayName !== undefined) {
+    users[userIndex].displayName = updates.displayName;
+  }
+  
+  if (updates.username !== undefined) {
+    users[userIndex].username = updates.username;
+  }
+  
+  if (updates.bio !== undefined) {
+    users[userIndex].bio = updates.bio;
+  }
+  
   return true;
 };

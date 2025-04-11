@@ -1,13 +1,13 @@
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { getUserById, toggleFollow, currentUserId, updateUserProfilePicture, updateUserCoverPhoto } from '@/lib/data';
-import { User } from '@/lib/types';
 import { Edit, Camera, UserCircle, Image as ImageIcon } from 'lucide-react';
 import { toast } from 'sonner';
-import { fileToDataUrl, validateImageFile } from '@/lib/fileUtils';
+import { fileToDataUrl, validateImageFile, compressImage } from '@/lib/fileUtils';
+import EditProfileDialog from './EditProfileDialog';
 
 interface ProfileHeaderProps {
   userId: string;
@@ -15,16 +15,23 @@ interface ProfileHeaderProps {
 
 const ProfileHeader = ({ userId }: ProfileHeaderProps) => {
   const navigate = useNavigate();
-  const profile = getUserById(userId);
+  const [profile, setProfile] = useState(getUserById(userId));
   const currentUser = getUserById(currentUserId);
   
   const [isFollowing, setIsFollowing] = useState(
     currentUser?.following.includes(userId) || false
   );
+
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   
   // Refs for hidden file inputs
   const profilePictureInputRef = useRef<HTMLInputElement>(null);
   const coverPhotoInputRef = useRef<HTMLInputElement>(null);
+
+  // Force component refresh when profile is updated
+  useEffect(() => {
+    setProfile(getUserById(userId));
+  }, [userId]);
   
   const handleFollow = () => {
     if (!currentUser || userId === currentUserId) return;
@@ -36,7 +43,11 @@ const ProfileHeader = ({ userId }: ProfileHeaderProps) => {
   };
   
   const handleEditProfile = () => {
-    toast("Edit profile functionality coming soon!");
+    setIsEditProfileOpen(true);
+  };
+  
+  const handleProfileUpdated = () => {
+    setProfile(getUserById(userId));
   };
   
   const handleViewFollowers = () => {
@@ -68,9 +79,17 @@ const ProfileHeader = ({ userId }: ProfileHeaderProps) => {
     }
     
     try {
-      const dataUrl = await fileToDataUrl(file);
-      updateUserProfilePicture(currentUserId, dataUrl);
-      toast.success("Profile picture updated successfully!");
+      // Compress the image before converting to data URL
+      const compressedBlob = await compressImage(file);
+      const dataUrl = await fileToDataUrl(new File([compressedBlob], file.name, { type: file.type }));
+      
+      const success = updateUserProfilePicture(currentUserId, dataUrl);
+      if (success) {
+        setProfile(getUserById(userId));
+        toast.success("Profile picture updated successfully!");
+      } else {
+        toast.error("Failed to update profile picture.");
+      }
     } catch (error) {
       toast.error("Failed to update profile picture. Please try again.");
     }
@@ -87,9 +106,17 @@ const ProfileHeader = ({ userId }: ProfileHeaderProps) => {
     }
     
     try {
-      const dataUrl = await fileToDataUrl(file);
-      updateUserCoverPhoto(currentUserId, dataUrl);
-      toast.success("Cover photo updated successfully!");
+      // Compress the image before converting to data URL
+      const compressedBlob = await compressImage(file, 1920, 0.85);
+      const dataUrl = await fileToDataUrl(new File([compressedBlob], file.name, { type: file.type }));
+      
+      const success = updateUserCoverPhoto(currentUserId, dataUrl);
+      if (success) {
+        setProfile(getUserById(userId));
+        toast.success("Cover photo updated successfully!");
+      } else {
+        toast.error("Failed to update cover photo.");
+      }
     } catch (error) {
       toast.error("Failed to update cover photo. Please try again.");
     }
@@ -224,6 +251,14 @@ const ProfileHeader = ({ userId }: ProfileHeaderProps) => {
           </button>
         </div>
       </div>
+      
+      {/* Edit Profile Dialog */}
+      <EditProfileDialog 
+        userId={userId}
+        open={isEditProfileOpen}
+        onOpenChange={setIsEditProfileOpen}
+        onProfileUpdated={handleProfileUpdated}
+      />
     </div>
   );
 };

@@ -15,6 +15,7 @@ const Profile = () => {
   const [userPosts, setUserPosts] = useState<PostType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [user, setUser] = useState<User | undefined>(undefined);
   
   useEffect(() => {
     if (!userId) {
@@ -23,19 +24,27 @@ const Profile = () => {
       return;
     }
     
-    const user = getUserById(userId);
-    if (!user) {
+    const userProfile = getUserById(userId);
+    if (!userProfile) {
       setError('User not found');
       setLoading(false);
       return;
     }
     
+    setUser(userProfile);
     setUserPosts(getUserPosts(userId));
     setLoading(false);
   }, [userId]);
   
   const handleGoBack = () => {
     navigate(-1);
+  };
+  
+  // Refresh posts when user profile is updated
+  const refreshPosts = () => {
+    if (userId) {
+      setUserPosts(getUserPosts(userId));
+    }
   };
   
   if (loading) return (
@@ -54,7 +63,7 @@ const Profile = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-      <ProfileHeader userId={userId!} />
+      {user && <ProfileHeader userId={userId!} key={`profile-${Date.now()}`} />}
       
       <div className="max-w-2xl mx-auto pt-6 px-4 pb-16">
         <Button
