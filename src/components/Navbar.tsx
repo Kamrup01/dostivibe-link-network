@@ -14,11 +14,15 @@ const Navbar = () => {
       <div className="max-w-6xl mx-auto flex justify-between items-center">
         {/* Logo */}
         <Link to="/" className="flex items-center space-x-2">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 flex items-center justify-center">
-            <span className="text-white font-bold text-lg">PL</span>
+          <div className="h-10 w-10">
+            <img 
+              src="/lovable-uploads/7a0f82fe-6329-4a35-bd3e-5e852fb95f03.png" 
+              alt="Dostivibe Logo" 
+              className="h-full w-full object-contain"
+            />
           </div>
-          <span className="text-xl font-bold bg-gradient-to-r from-purple-500 to-indigo-500 text-transparent bg-clip-text">
-            PulseLink
+          <span className="text-xl font-bold bg-gradient-to-r from-[#ff3366] to-[#ff3366] text-transparent bg-clip-text">
+            Dostivibe
           </span>
         </Link>
         
