@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Heart, MessageCircle, Send, MoreHorizontal, Music, Play, Pause } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -20,9 +20,29 @@ const Post = ({ post }: PostProps) => {
   const [newComment, setNewComment] = useState('');
   const [comments, setComments] = useState([...post.comments]);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
+  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
   
   const user = getUserById(post.userId);
+  
+  // Initialize audio when the component mounts or when music changes
+  useEffect(() => {
+    if (post.music?.url) {
+      const audioElement = new Audio(post.music.url);
+      setAudio(audioElement);
+      
+      // Add event listeners
+      audioElement.addEventListener('ended', () => {
+        setIsPlaying(false);
+      });
+      
+      return () => {
+        // Clean up
+        audioElement.pause();
+        audioElement.src = '';
+        audioElement.removeEventListener('ended', () => setIsPlaying(false));
+      };
+    }
+  }, [post.music]);
   
   const handleLike = () => {
     toggleLike(post.id, currentUserId);
@@ -39,24 +59,27 @@ const Post = ({ post }: PostProps) => {
   };
   
   const togglePlayMusic = () => {
-    if (!post.music) return;
+    if (!post.music || !audio) return;
     
-    if (!audioElement) {
-      const audio = new Audio(post.music.url);
-      setAudioElement(audio);
-      audio.play().catch(error => console.error("Error playing audio:", error));
-      setIsPlaying(true);
-      
-      audio.addEventListener('ended', () => {
-        setIsPlaying(false);
-      });
+    if (isPlaying) {
+      audio.pause();
+      setIsPlaying(false);
     } else {
-      if (isPlaying) {
-        audioElement.pause();
-      } else {
-        audioElement.play().catch(error => console.error("Error playing audio:", error));
+      // Create a promise to handle async playback
+      const playPromise = audio.play();
+      
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            // Playback started successfully
+            setIsPlaying(true);
+          })
+          .catch(error => {
+            // Playback failed
+            console.error("Error playing audio:", error);
+            setIsPlaying(false);
+          });
       }
-      setIsPlaying(!isPlaying);
     }
   };
   

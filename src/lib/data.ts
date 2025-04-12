@@ -5,7 +5,7 @@ import { User, Post, Comment, Song } from './types';
 // Generate User data
 export const users: User[] = Array.from({ length: 10 }, (_, i) => {
   const userId = `user-${i + 1}`;
-  const username = faker.internet.userName();
+  const username = faker.internet.username();
   const displayName = faker.person.fullName();
   const profilePicture = faker.image.avatar();
   const coverPhoto = faker.image.urlLoremFlickr({ category: 'nature' });
@@ -26,19 +26,32 @@ export const users: User[] = Array.from({ length: 10 }, (_, i) => {
   };
 });
 
+// Sample songs for music posts
+export const sampleSongs: Song[] = [
+  { id: '1', title: 'Shape of You', artist: 'Ed Sheeran', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' },
+  { id: '2', title: 'Blinding Lights', artist: 'The Weeknd', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3' },
+  { id: '3', title: 'Dance Monkey', artist: 'Tones and I', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3' },
+  { id: '4', title: 'Someone You Loved', artist: 'Lewis Capaldi', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3' },
+  { id: '5', title: 'Bad Guy', artist: 'Billie Eilish', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3' },
+];
+
 // Generate Post data
 export const posts: Post[] = Array.from({ length: 20 }, (_, i) => {
   const userId = `user-${faker.number.int({ min: 1, max: 10 })}`;
   const image = faker.image.urlLoremFlickr({ category: 'nature' });
+  // Add music to some posts
+  const includeMusic = faker.datatype.boolean(0.3); // 30% chance of having music
+  const music = includeMusic ? sampleSongs[faker.number.int({ min: 0, max: sampleSongs.length - 1 })] : undefined;
   
   return {
     id: `post-${i + 1}`,
     userId: userId,
     content: faker.lorem.paragraph(),
-    image: image,
+    image: faker.datatype.boolean(0.7) ? image : undefined, // 70% chance of having image
+    music,
     likes: Array.from({ length: faker.number.int({ min: 0, max: 10 }) }, () => `user-${faker.number.int({ min: 1, max: 10 })}`),
     comments: Array.from({ length: faker.number.int({ min: 0, max: 5 }) }, () => ({
-      id: `comment-${Date.now()}`,
+      id: `comment-${faker.number.int(100000)}`,
       userId: `user-${faker.number.int({ min: 1, max: 10 })}`,
       content: faker.lorem.sentence(),
       createdAt: faker.date.recent().toISOString(),
@@ -159,3 +172,4 @@ export const createPost = (
   posts.unshift(newPost);
   return newPost;
 };
+

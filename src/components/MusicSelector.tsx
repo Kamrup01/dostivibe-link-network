@@ -10,27 +10,8 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-
-interface Song {
-  id: string;
-  title: string;
-  artist: string;
-  url: string;
-}
-
-// Mock songs data (in a real app, this would come from an API)
-const mockSongs: Song[] = [
-  { id: '1', title: 'Shape of You', artist: 'Ed Sheeran', url: 'https://example.com/shape-of-you.mp3' },
-  { id: '2', title: 'Blinding Lights', artist: 'The Weeknd', url: 'https://example.com/blinding-lights.mp3' },
-  { id: '3', title: 'Dance Monkey', artist: 'Tones and I', url: 'https://example.com/dance-monkey.mp3' },
-  { id: '4', title: 'Someone You Loved', artist: 'Lewis Capaldi', url: 'https://example.com/someone-you-loved.mp3' },
-  { id: '5', title: 'Bad Guy', artist: 'Billie Eilish', url: 'https://example.com/bad-guy.mp3' },
-  { id: '6', title: 'Stay', artist: 'The Kid LAROI & Justin Bieber', url: 'https://example.com/stay.mp3' },
-  { id: '7', title: 'Levitating', artist: 'Dua Lipa', url: 'https://example.com/levitating.mp3' },
-  { id: '8', title: 'Montero', artist: 'Lil Nas X', url: 'https://example.com/montero.mp3' },
-  { id: '9', title: 'Watermelon Sugar', artist: 'Harry Styles', url: 'https://example.com/watermelon-sugar.mp3' },
-  { id: '10', title: 'Peaches', artist: 'Justin Bieber', url: 'https://example.com/peaches.mp3' }
-];
+import { sampleSongs } from '@/lib/data';
+import { Song } from '@/lib/types';
 
 interface MusicSelectorProps {
   onSelectSong: (song: Song | null) => void;
@@ -39,22 +20,24 @@ interface MusicSelectorProps {
 
 const MusicSelector = ({ onSelectSong, selectedSong }: MusicSelectorProps) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [filteredSongs, setFilteredSongs] = useState<Song[]>(mockSongs);
+  const [filteredSongs, setFilteredSongs] = useState<Song[]>(sampleSongs);
+  const [isOpen, setIsOpen] = useState(false);
   
   useEffect(() => {
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
-      const filtered = mockSongs.filter(
+      const filtered = sampleSongs.filter(
         song => song.title.toLowerCase().includes(term) || song.artist.toLowerCase().includes(term)
       );
       setFilteredSongs(filtered);
     } else {
-      setFilteredSongs(mockSongs);
+      setFilteredSongs(sampleSongs);
     }
   }, [searchTerm]);
   
   const handleSelectSong = (song: Song) => {
     onSelectSong(song);
+    setIsOpen(false);
   };
   
   const handleRemoveSong = () => {
@@ -75,7 +58,7 @@ const MusicSelector = ({ onSelectSong, selectedSong }: MusicSelectorProps) => {
           </Button>
         </div>
       ) : (
-        <Dialog>
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>
             <Button variant="outline" size="sm" className="gap-2">
               <Music className="h-4 w-4" />
