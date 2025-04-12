@@ -1,37 +1,6 @@
+
 import { faker } from '@faker-js/faker';
-
-export interface User {
-  id: string;
-  username: string;
-  displayName: string;
-  email: string;
-  bio: string;
-  location: string;
-  website: string;
-  followers: string[];
-  following: string[];
-  createdAt: string;
-  profilePicture: string;
-  coverPhoto?: string;
-}
-
-export interface Comment {
-  id: string;
-  userId: string;
-  content: string;
-  createdAt: string;
-}
-
-export interface Post {
-  id: string;
-  userId: string;
-  content: string;
-  image?: string;
-  music?: { id: string; title: string; artist: string; url: string };
-  likes: string[];
-  comments: Comment[];
-  createdAt: string;
-}
+import { User, Post, Comment, Song } from './types';
 
 // Generate User data
 export const users: User[] = Array.from({ length: 10 }, (_, i) => {
@@ -103,6 +72,24 @@ export const toggleLike = (postId: string, userId: string) => {
   }
 };
 
+// Function to toggle follow status
+export const toggleFollow = (currentUserId: string, targetUserId: string) => {
+  const currentUser = getUserById(currentUserId);
+  const targetUser = getUserById(targetUserId);
+  
+  if (!currentUser || !targetUser) return false;
+  
+  if (currentUser.following.includes(targetUserId)) {
+    currentUser.following = currentUser.following.filter(id => id !== targetUserId);
+    targetUser.followers = targetUser.followers.filter(id => id !== currentUserId);
+  } else {
+    currentUser.following.push(targetUserId);
+    targetUser.followers.push(currentUserId);
+  }
+  
+  return true;
+};
+
 // Function to add a comment to a post
 export const addComment = (postId: string, userId: string, content: string) => {
   const post = posts.find(post => post.id === postId);
@@ -117,11 +104,46 @@ export const addComment = (postId: string, userId: string, content: string) => {
   }
 };
 
+// Function to update user profile
+export const updateUserProfile = (userId: string, data: { displayName: string; username: string; bio: string }) => {
+  const user = users.find(user => user.id === userId);
+  
+  if (!user) return false;
+  
+  user.displayName = data.displayName;
+  user.username = data.username;
+  user.bio = data.bio;
+  
+  return true;
+};
+
+// Function to update user profile picture
+export const updateUserProfilePicture = (userId: string, imageUrl: string) => {
+  const user = users.find(user => user.id === userId);
+  
+  if (!user) return false;
+  
+  user.profilePicture = imageUrl;
+  
+  return true;
+};
+
+// Function to update user cover photo
+export const updateUserCoverPhoto = (userId: string, imageUrl: string) => {
+  const user = users.find(user => user.id === userId);
+  
+  if (!user) return false;
+  
+  user.coverPhoto = imageUrl;
+  
+  return true;
+};
+
 export const createPost = (
   userId: string,
   content: string,
   image?: string,
-  music?: { id: string; title: string; artist: string; url: string }
+  music?: Song
 ) => {
   const newPost = {
     id: `post-${Date.now()}`,

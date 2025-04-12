@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import ProfileHeader from '@/components/ProfileHeader';
 import Post from '@/components/Post';
-import { getUserById, getUserPosts, users } from '@/lib/data';
+import { getUserById, getUserPosts } from '@/lib/data';
 import { Post as PostType, User } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft } from 'lucide-react';
@@ -31,7 +31,11 @@ const Profile = () => {
       return;
     }
     
-    setUser(userProfile);
+    // Convert to the appropriate User type from types.d.ts
+    setUser({
+      ...userProfile,
+      coverPhoto: userProfile.coverPhoto || '' // Ensure coverPhoto is defined
+    });
     setUserPosts(getUserPosts(userId));
     setLoading(false);
   }, [userId]);

@@ -32,7 +32,7 @@ const SearchDialog = ({ onClose }: SearchDialogProps) => {
         user.displayName.toLowerCase().includes(term) || 
         user.username.toLowerCase().includes(term)
       );
-      setSearchResults(filtered);
+      setSearchResults([...filtered]); // Create a new array to avoid type conflicts
     } else {
       setSearchResults([]);
     }
